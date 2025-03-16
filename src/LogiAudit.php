@@ -2,4 +2,4 @@
 
 namespace VendorName\Skeleton;
 
-class Skeleton {}
+class LogiAudit {}
