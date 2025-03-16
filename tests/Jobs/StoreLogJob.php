@@ -14,28 +14,34 @@ class StoreLogJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public string $level;
+
     public string $message;
+
     public ?int $modelId;
+
     public ?string $modelType;
+
     public ?string $traceId;
+
     public ?array $context;
+
     public ?string $ipAddress;
+
     public bool $deletable;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        string  $level,
-        string  $message,
-        ?int    $modelId = null,
+        string $level,
+        string $message,
+        ?int $modelId = null,
         ?string $modelType = null,
         ?string $traceId = null,
-        ?array  $context = [],
+        ?array $context = [],
         ?string $ipAddress = null,
-        bool    $deletable = true
-    )
-    {
+        bool $deletable = true
+    ) {
         $this->level = $level;
         $this->message = $message;
         $this->modelId = $modelId;
@@ -51,14 +57,16 @@ class StoreLogJob implements ShouldQueue
      */
     public function handle(): void
     {
-        dump("🚀 StoreLogJob handle() triggered!");
+        dump('🚀 StoreLogJob handle() triggered!');
         if ($this->level === 'critical') {
             $this->fail(new \Exception("Simulated failure for 'critical' level logs!"));
+
             return;
         }
 
         if (empty($this->message)) {
-            $this->fail("Job failed: Log message is empty.");
+            $this->fail('Job failed: Log message is empty.');
+
             return;
         }
 
@@ -73,7 +81,6 @@ class StoreLogJob implements ShouldQueue
             'deletable' => $this->deletable,
         ]);
 
-        dump("✅ Log entry created in database!");
+        dump('✅ Log entry created in database!');
     }
-
 }

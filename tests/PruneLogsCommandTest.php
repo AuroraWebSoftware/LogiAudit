@@ -2,9 +2,9 @@
 
 use AuroraWebSoftware\LogiAudit\Jobs\PruneLogJob;
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditLog;
+use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -12,21 +12,21 @@ beforeEach(function () {
 
     Artisan::call('migrate:refresh');
 
-    dump("✅ Database migrations completed in PostgreSQL...");
-    dump("✅ Queue Driver: " . config('queue.default'));
+    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Queue Driver: '.config('queue.default'));
 
     $this->db = new DB;
     $this->db->addConnection(config('database.connections.pgsql'));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
-    if (!Schema::hasTable('jobs')) {
+    if (! Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL...");
     }
 
-    if (!Schema::hasTable('failed_jobs')) {
+    if (! Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL...");
@@ -34,7 +34,7 @@ beforeEach(function () {
 });
 
 it('processes StoreLogJob, checks failed jobs, and prunes deletable logs', function () {
-    dump("✅ Queue Driver: " . config('queue.default'));
+    dump('✅ Queue Driver: '.config('queue.default'));
 
     addLogT('error', 'Real queue test message', [
         'model_id' => 123,
@@ -73,17 +73,17 @@ it('processes StoreLogJob, checks failed jobs, and prunes deletable logs', funct
     ]);
 
     $queuedJobs = DB::table('jobs')->get();
-    dump("🔍 Jobs in queue:", $queuedJobs);
+    dump('🔍 Jobs in queue:', $queuedJobs);
 
     Artisan::call('queue:work --tries=1 --stop-when-empty');
 
-    dump("✅ After processing queue");
+    dump('✅ After processing queue');
 
     $failedJobs = DB::table('failed_jobs')->get();
-    dump("❌ Failed Jobs:", $failedJobs);
+    dump('❌ Failed Jobs:', $failedJobs);
 
     $logs = LogiAuditLog::all();
-    dump("✅ All log records:", $logs);
+    dump('✅ All log records:', $logs);
     expect($logs)->toHaveCount(4);
 
     Queue::fake();
@@ -94,7 +94,7 @@ it('processes StoreLogJob, checks failed jobs, and prunes deletable logs', funct
     $initialCount = DB::table('logiaudit_logs')->count();
     dump("🔍 Initial log count: $initialCount");
 
-    (new PruneLogJob())->handle();
+    (new PruneLogJob)->handle();
 
     $remainingCount = DB::table('logiaudit_logs')->count();
     dump("🔍 Remaining log count after prune: $remainingCount");

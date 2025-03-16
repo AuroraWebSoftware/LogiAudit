@@ -13,10 +13,11 @@ class LogiAuditHandler
     {
         $logger = new Logger('logiaudit');
 
-        $logger->pushHandler(new class extends AbstractProcessingHandler {
+        $logger->pushHandler(new class extends AbstractProcessingHandler
+        {
             protected function write(LogRecord $record): void
             {
-                dump("🚀 LogiAuditHandler write() triggered!");
+                dump('🚀 LogiAuditHandler write() triggered!');
 
                 $context = $record->context;
                 $modelId = $context['model_id'] ?? null;
@@ -35,7 +36,7 @@ class LogiAuditHandler
                 ))->onQueue(config('queue.connections.database_log'))
                     ->afterCommit();
 
-                dump("✅ StoreLogJob queued successfully!");
+                dump('✅ StoreLogJob queued successfully!');
             }
         });
 

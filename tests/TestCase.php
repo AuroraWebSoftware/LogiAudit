@@ -4,9 +4,7 @@ namespace AuroraWebSoftware\LogiAudit\Tests;
 
 use AuroraWebSoftware\LogiAudit\LogiAuditServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\TestCase as Orchestra;
-
 
 class TestCase extends Orchestra
 {
@@ -34,14 +32,13 @@ class TestCase extends Orchestra
         // config()->set('database.default', 'mysql');
 
         // for local tests with sqlite
-        //config()->set('database.default', 'testing');
+        // config()->set('database.default', 'testing');
 
         // for local tests with mysql
-        //config()->set('database.default', 'mysql');
+        // config()->set('database.default', 'mysql');
 
-        //$migration = include __DIR__.'/../database/migrations/create_flexyfield_table.php';
-        //$migration->up();
+        // $migration = include __DIR__.'/../database/migrations/create_flexyfield_table.php';
+        // $migration->up();
 
     }
 }
-
