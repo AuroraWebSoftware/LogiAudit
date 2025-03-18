@@ -21,6 +21,6 @@ class LogiAuditLog extends Model
 
     protected $casts = [
         'context' => 'array',
-        'deletable' => 'boolean'
+        'deletable' => 'boolean',
     ];
 }

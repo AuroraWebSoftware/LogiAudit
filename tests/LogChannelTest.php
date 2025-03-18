@@ -1,11 +1,9 @@
 <?php
 
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditLog;
-use AuroraWebSoftware\LogiAudit\Jobs\StoreLogJob;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -13,21 +11,21 @@ beforeEach(function () {
 
     Artisan::call('migrate:refresh');
 
-    dump("✅ Database migrations completed in PostgreSQL...");
-    dump("✅ Queue Driver: " . config('queue.default'));
+    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Queue Driver: '.config('queue.default'));
 
     $this->db = new DB;
     $this->db->addConnection(config('database.connections.pgsql'));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
-    if (!Schema::hasTable('jobs')) {
+    if (! Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL...");
     }
 
-    if (!Schema::hasTable('failed_jobs')) {
+    if (! Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL...");
@@ -37,12 +35,12 @@ beforeEach(function () {
         'logging.channels.logiaudit' => [
             'driver' => 'custom',
             'via' => \AuroraWebSoftware\LogiAudit\Logging\LogiAuditHandler::class,
-        ]
+        ],
     ]);
 });
 
 it('logs multiple messages, queues them, processes jobs, and verifies results', function () {
-    dump("🚀 Logging started...");
+    dump('🚀 Logging started...');
 
     Log::channel('logiaudit')->info('First log message', [
         'trace_id' => 'trace-1',
@@ -68,24 +66,24 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
         'deletable' => true,
     ]);
 
-    dump("✅ Log messages sent!");
+    dump('✅ Log messages sent!');
 
     $queuedJobs = DB::table('jobs')->get();
-    dump("🔍 Queued Jobs in database:", json_encode($queuedJobs, JSON_PRETTY_PRINT));
+    dump('🔍 Queued Jobs in database:', json_encode($queuedJobs, JSON_PRETTY_PRINT));
     expect($queuedJobs)->toHaveCount(3);
 
     Artisan::call('queue:work --queue=default --tries=3 --stop-when-empty');
 
     $remainingJobs = DB::table('jobs')->get();
-    dump("🔍 Remaining Jobs in Queue (After Processing):", json_encode($remainingJobs, JSON_PRETTY_PRINT));
+    dump('🔍 Remaining Jobs in Queue (After Processing):', json_encode($remainingJobs, JSON_PRETTY_PRINT));
     expect($remainingJobs)->toBeEmpty();
 
     $failedJobs = DB::table('failed_jobs')->get();
-    dump("❌ Failed Jobs:", json_encode($failedJobs, JSON_PRETTY_PRINT));
+    dump('❌ Failed Jobs:', json_encode($failedJobs, JSON_PRETTY_PRINT));
     expect($failedJobs)->toHaveCount(1);
 
     $logs = LogiAuditLog::all();
-    dump("✅ Log records in database:", json_encode($logs, JSON_PRETTY_PRINT));
+    dump('✅ Log records in database:', json_encode($logs, JSON_PRETTY_PRINT));
     expect($logs)->toHaveCount(2);
 
     $log1 = LogiAuditLog::where('trace_id', 'trace-1')->first();

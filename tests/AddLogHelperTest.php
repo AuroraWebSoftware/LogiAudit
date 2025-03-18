@@ -12,21 +12,21 @@ beforeEach(function () {
 
     Artisan::call('migrate:refresh');
 
-    dump("✅ Database migrations completed in PostgreSQL...");
-    dump("✅ Queue Driver:", config('queue.default'));
+    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Queue Driver:', config('queue.default'));
 
     $this->db = new DB;
     $this->db->addConnection(config('database.connections.pgsql'));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
-    if (!Schema::hasTable('jobs')) {
+    if (! Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL for testing...");
     }
 
-    if (!Schema::hasTable('failed_jobs')) {
+    if (! Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL for testing...");
@@ -34,7 +34,7 @@ beforeEach(function () {
 });
 
 it('dispatches and processes multiple StoreLogJob entries with delays and failures', function () {
-    dump("✅ Queue Driver:", config('queue.default'));
+    dump('✅ Queue Driver:', config('queue.default'));
 
     addLogT('error', 'Real queue test message', [
         'model_id' => 123,
@@ -91,26 +91,26 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
 
         $payload = json_decode($job->payload, true);
         if ($payload) {
-            dump("🔹 Payload Data:", $payload);
+            dump('🔹 Payload Data:', $payload);
         } else {
-            dump("⚠️ WARNING: Payload JSON could not be parsed!", $job->payload);
+            dump('⚠️ WARNING: Payload JSON could not be parsed!', $job->payload);
         }
     }
 
-    dump("🔸 Before processing queue");
+    dump('🔸 Before processing queue');
 
     Artisan::call('queue:work --tries=1 --stop-when-empty');
 
-    dump("✅ After processing queue");
+    dump('✅ After processing queue');
 
     $remainingJobs = DB::table('jobs')->get();
-    dump("🔹 Jobs table after processing queue:", $remainingJobs);
+    dump('🔹 Jobs table after processing queue:', $remainingJobs);
 
     $failedJobs = DB::table('failed_jobs')->get();
-    dump("❌ Failed Jobs Table:", $failedJobs);
+    dump('❌ Failed Jobs Table:', $failedJobs);
 
     $logs = LogiAuditLog::all();
-    dump("✅ All log records in PostgreSQL (logiaudit_logs table):", $logs);
+    dump('✅ All log records in PostgreSQL (logiaudit_logs table):', $logs);
 
     expect($logs)->toHaveCount(4);
     expect($failedJobs)->toHaveCount(1);

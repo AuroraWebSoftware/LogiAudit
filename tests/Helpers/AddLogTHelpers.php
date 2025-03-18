@@ -1,9 +1,8 @@
 <?php
 
-
 use AuroraWebSoftware\LogiAudit\Tests\Jobs\StoreLogJob;
 
-if (!function_exists('addLogT')) {
+if (! function_exists('addLogT')) {
     function addLogT(string $level, string $message, array $options = [])
     {
         $modelId = $options['model_id'] ?? null;

@@ -15,7 +15,7 @@ class LogiAuditServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -53,8 +53,8 @@ class LogiAuditServiceProvider extends ServiceProvider
             ->name('logiaudit')
             ->hasConfigFile('logiaudit')
             ->hasViews();
-        //->hasMigration('create_arflow_history_table')
-        //->hasCommand(ArFlowCommand::class);
+        // ->hasMigration('create_arflow_history_table')
+        // ->hasCommand(ArFlowCommand::class);
 
     }
 }
