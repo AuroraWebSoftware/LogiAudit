@@ -13,7 +13,8 @@ class LogiAuditHandler
     {
         $logger = new Logger('logiaudit');
 
-        $logger->pushHandler(new class extends AbstractProcessingHandler {
+        $logger->pushHandler(new class extends AbstractProcessingHandler
+        {
             protected function write(LogRecord $record): void
             {
                 $context = $record->context;

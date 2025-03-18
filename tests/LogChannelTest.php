@@ -112,4 +112,3 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
         ->and($decodedContext2['action'])->toBe('update')
         ->and($log2->deletable)->toBeFalse();
 });
-
