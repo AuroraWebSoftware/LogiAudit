@@ -23,14 +23,14 @@ class LogiAuditServiceProvider extends ServiceProvider
             ]);
         }
 
-//        Queue::extend('logiaudit_database', function () {
-//            return new DatabaseQueue(
-//                app('db'),
-//                config('logiaudit.queue.table'),
-//                config('queue.connections.database.retry_after', 90),
-//                config('queue.connections.database.after_commit', false)
-//            );
-//        });
+        //        Queue::extend('logiaudit_database', function () {
+        //            return new DatabaseQueue(
+        //                app('db'),
+        //                config('logiaudit.queue.table'),
+        //                config('queue.connections.database.retry_after', 90),
+        //                config('queue.connections.database.after_commit', false)
+        //            );
+        //        });
 
     }
 
