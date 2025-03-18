@@ -10,7 +10,7 @@ if (!function_exists('addLogT')) {
         $modelType = $options['model_type'] ?? null;
         $traceId = $options['trace_id'] ?? null;
         $context = $options['context'] ?? [];
-        $ipAdress = $options['ip_adress'] ?? null;
+        $ipAddress = $options['ip_address'] ?? null;
         $deletable = $options['deletable'] ?? true;
 
         StoreLogJob::dispatch(
@@ -20,7 +20,7 @@ if (!function_exists('addLogT')) {
             $modelType,
             $traceId,
             $context,
-            $ipAdress,
+            $ipAddress,
             $deletable
         )->onQueue('default');
 

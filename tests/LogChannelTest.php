@@ -89,7 +89,7 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
     expect($logs)->toHaveCount(2);
 
     $log1 = LogiAuditLog::where('trace_id', 'trace-1')->first();
-    $decodedContext1 = json_decode($log1->context, true);
+    $decodedContext1 = json_decode($log1->context, true); // JSON formatında kaydedildiği için decode ediyoruz
 
     expect($log1)->not->toBeNull()
         ->and($log1->level)->toBe('info')
@@ -97,8 +97,8 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
         ->and($log1->trace_id)->toBe('trace-1')
         ->and($log1->model_id)->toBe(100)
         ->and($log1->model_type)->toBe('App\Models\User')
-        ->and($decodedContext1)->toHaveKey('context')
-        ->and($decodedContext1['context'])->toHaveKey('foo', 'bar')
+        ->and($decodedContext1)->toHaveKey('foo')
+        ->and($decodedContext1['foo'])->toBe('bar')
         ->and($log1->deletable)->toBeTrue();
 
     $log2 = LogiAuditLog::where('trace_id', 'trace-2')->first();
@@ -110,7 +110,8 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
         ->and($log2->trace_id)->toBe('trace-2')
         ->and($log2->model_id)->toBe(200)
         ->and($log2->model_type)->toBe('App\Models\Order')
-        ->and($decodedContext2)->toHaveKey('context')
-        ->and($decodedContext2['context'])->toHaveKey('action', 'update')
+        ->and($decodedContext2)->toHaveKey('action')
+        ->and($decodedContext2['action'])->toBe('update')
         ->and($log2->deletable)->toBeFalse();
 });
+

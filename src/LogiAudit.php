@@ -1,5 +1,5 @@
 <?php
 
-namespace VendorName\Skeleton;
+namespace AuroraWebSoftware\LogiAudit;
 
 class LogiAudit {}

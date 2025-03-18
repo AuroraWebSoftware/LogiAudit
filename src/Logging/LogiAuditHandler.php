@@ -16,26 +16,36 @@ class LogiAuditHandler
         $logger->pushHandler(new class extends AbstractProcessingHandler {
             protected function write(LogRecord $record): void
             {
-                dump("🚀 LogiAuditHandler write() triggered!");
-
                 $context = $record->context;
+
                 $modelId = $context['model_id'] ?? null;
                 $modelType = $context['model_type'] ?? null;
-                unset($context['model_id'], $context['model_type']);
+                $traceId = $context['trace_id'] ?? null;
+                $ipAddress = $context['ip_address'] ?? null;
+                $deletable = $context['deletable'] ?? true;
+
+                unset(
+                    $context['model_id'],
+                    $context['model_type'],
+                    $context['trace_id'],
+                    $context['ip_address'],
+                    $context['deletable']
+                );
+
+                if (isset($context['context']) && is_array($context['context'])) {
+                    $context = $context['context'];
+                }
 
                 dispatch(new StoreLogJob(
                     strtolower($record->level->name),
                     $record->message,
                     $modelId,
                     $modelType,
-                    $context['trace_id'] ?? null,
-                    $context ?? [],
-                    $context['ip_address'] ?? null,
-                    $context['deletable'] ?? true
-                ))->onQueue(config('queue.connections.database_log'))
-                    ->afterCommit();
-
-                dump("✅ StoreLogJob queued successfully!");
+                    $traceId,
+                    $context,
+                    $ipAddress,
+                    $deletable
+                ))->onQueue('default');
             }
         });
 

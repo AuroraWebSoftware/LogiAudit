@@ -3,6 +3,8 @@
 namespace AuroraWebSoftware\LogiAudit;
 
 use AuroraWebSoftware\LogiAudit\Commands\PruneLogsCommand;
+use Illuminate\Queue\DatabaseQueue;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 
@@ -20,6 +22,15 @@ class LogiAuditServiceProvider extends ServiceProvider
                 PruneLogsCommand::class,
             ]);
         }
+
+//        Queue::extend('logiaudit_database', function () {
+//            return new DatabaseQueue(
+//                app('db'),
+//                config('logiaudit.queue.table'),
+//                config('queue.connections.database.retry_after', 90),
+//                config('queue.connections.database.after_commit', false)
+//            );
+//        });
 
     }
 
