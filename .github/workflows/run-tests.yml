@@ -28,6 +28,17 @@ jobs:
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432
+        env:
+          POSTGRES_USER: logiaudit
+          POSTGRES_PASSWORD: logiaudit
+          POSTGRES_DB: logiaudit
+        options: --health-cmd="pg_isready -U logiaudit" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
