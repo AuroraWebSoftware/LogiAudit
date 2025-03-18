@@ -32,7 +32,7 @@ jobs:
       postgres:
         image: postgres:15
         ports:
-          - 5432
+          - "54321:5432"
         env:
           POSTGRES_USER: logiaudit
           POSTGRES_PASSWORD: logiaudit
