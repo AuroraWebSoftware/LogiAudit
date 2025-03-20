@@ -28,7 +28,6 @@ class PruneLogJob implements ShouldQueue
             ->where('deleted_at', '<=', $now)
             ->delete();
 
-
         Log::info("PruneLogJob executed. Deleted {$deletedCount} log records.");
     }
 }
