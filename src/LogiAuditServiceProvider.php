@@ -3,8 +3,6 @@
 namespace AuroraWebSoftware\LogiAudit;
 
 use AuroraWebSoftware\LogiAudit\Commands\PruneLogsCommand;
-use Illuminate\Queue\DatabaseQueue;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 
@@ -17,30 +15,21 @@ class LogiAuditServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
+        $this->publishes([
+            __DIR__.'/../config/logiaudit.php' => config_path('logiaudit.php'),
+        ], 'config');
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PruneLogsCommand::class,
             ]);
         }
-
-        //        Queue::extend('logiaudit_database', function () {
-        //            return new DatabaseQueue(
-        //                app('db'),
-        //                config('logiaudit.queue.table'),
-        //                config('queue.connections.database.retry_after', 90),
-        //                config('queue.connections.database.after_commit', false)
-        //            );
-        //        });
-
     }
 
     /**
      * Register any package services.
      */
-    public function register()
-    {
-        // Register package stuff
-    }
+    public function register() {}
 
     public function configurePackage(Package $package): void
     {
@@ -53,8 +42,8 @@ class LogiAuditServiceProvider extends ServiceProvider
             ->name('logiaudit')
             ->hasConfigFile('logiaudit')
             ->hasViews();
-        // ->hasMigration('create_arflow_history_table')
-        // ->hasCommand(ArFlowCommand::class);
+        // ->hasMigration('')
+        // ->hasCommand(::class);
 
     }
 }

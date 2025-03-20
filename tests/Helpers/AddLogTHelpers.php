@@ -8,9 +8,10 @@ if (! function_exists('addLogT')) {
         $modelId = $options['model_id'] ?? null;
         $modelType = $options['model_type'] ?? null;
         $traceId = $options['trace_id'] ?? null;
-        $context = $options['context'] ?? [];
+        $context = $options['context'] ?? null;
         $ipAddress = $options['ip_address'] ?? null;
         $deletable = $options['deletable'] ?? true;
+        $deleteAfterDays = $options['delete_after_days'] ?? null;
 
         StoreLogJob::dispatch(
             $level,
@@ -20,8 +21,9 @@ if (! function_exists('addLogT')) {
             $traceId,
             $context,
             $ipAddress,
-            $deletable
-        )->onQueue('default');
+            $deletable,
+            $deleteAfterDays
+        );
 
     }
 }

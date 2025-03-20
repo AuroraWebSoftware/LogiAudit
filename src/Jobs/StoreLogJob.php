@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 class StoreLogJob implements ShouldQueue
 {
@@ -29,6 +30,8 @@ class StoreLogJob implements ShouldQueue
 
     public bool $deletable;
 
+    public ?int $deleteAfterDays;
+
     /**
      * Create a new job instance.
      */
@@ -38,9 +41,10 @@ class StoreLogJob implements ShouldQueue
         ?int $modelId = null,
         ?string $modelType = null,
         ?string $traceId = null,
-        ?array $context = [],
+        ?array $context = null,
         ?string $ipAddress = null,
-        bool $deletable = true
+        bool $deletable = true,
+        ?int $deleteAfterDays = null
     ) {
         $this->level = $level;
         $this->message = $message;
@@ -50,6 +54,9 @@ class StoreLogJob implements ShouldQueue
         $this->context = $context;
         $this->ipAddress = $ipAddress;
         $this->deletable = $deletable;
+        $this->deleteAfterDays = $deleteAfterDays;
+
+        $this->onQueue('logiaudit');
     }
 
     /**
@@ -63,9 +70,12 @@ class StoreLogJob implements ShouldQueue
             'model_id' => $this->modelId,
             'model_type' => $this->modelType,
             'trace_id' => $this->traceId,
-            'context' => json_encode($this->context),
+            'context' => $this->context,
             'ip_address' => $this->ipAddress,
             'deletable' => $this->deletable,
+            'deleted_at' => ($this->deletable && $this->deleteAfterDays)
+                ? Carbon::now()->addDays($this->deleteAfterDays)
+                : null,
         ]);
 
     }

@@ -17,6 +17,7 @@ class LogiAuditLog extends Model
         'context',
         'ip_address',
         'deletable',
+        'deleted_at',
     ];
 
     protected $casts = [

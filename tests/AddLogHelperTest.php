@@ -5,6 +5,7 @@ declare(strict_types=1);
 use AuroraWebSoftware\LogiAudit\Tests\Models\LogiAuditLog;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -31,6 +32,8 @@ beforeEach(function () {
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL for testing...");
     }
+
+    Config::set('logiaudit.queue', 'logiaudit');
 });
 
 it('dispatches and processes multiple StoreLogJob entries with delays and failures', function () {
@@ -40,7 +43,6 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
         'model_id' => 123,
         'model_type' => 'App\\Models\\User',
         'trace_id' => 'real-queue-999',
-        'context' => ['foo' => 'bar', 'test_value' => 'test'],
         'ip_address' => '127.0.0.1',
         'deletable' => false,
     ]);
@@ -49,9 +51,10 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
         'model_id' => 200,
         'model_type' => 'App\\Models\\User',
         'trace_id' => 'user-login-001',
-        'context' => ['action' => 'login'],
+        'context' => ['action' => 'login', 'üüöö' => 'İİÖÖÜÜ'],
         'ip_address' => '192.168.1.1',
         'deletable' => true,
+        'delete_after_days' => 5,
     ]);
 
     addLogT('warning', 'User attempted unauthorized access', [
@@ -79,6 +82,23 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
         'context' => ['endpoint' => '/api/data'],
         'ip_address' => '10.0.0.1',
         'deletable' => true,
+        'delete_after_days' => 35,
+    ]);
+
+    addLogT('error', '', [
+        'model_id' => 300,
+        'model_type' => 'App\\Models\\ApiRequest',
+        'trace_id' => 'api-request-xyz',
+        'ip_address' => '10.0.0.1',
+        'deletable' => true,
+        'delete_after_days' => 35,
+    ]);
+
+    addLogT('warning', 'Context null given', [
+        'trace_id' => 'api-request-xyz',
+        'ip_address' => '10.0.0.5',
+        'deletable' => false,
+        'delete_after_days' => 12,
     ]);
 
     $queuedJobs = DB::table('jobs')->get();
@@ -99,7 +119,11 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
 
     dump('🔸 Before processing queue');
 
-    Artisan::call('queue:work --tries=1 --stop-when-empty');
+    Artisan::call('queue:work', [
+        '--queue' => 'logiaudit',
+        '--tries' => 1,
+        '--stop-when-empty' => true,
+    ]);
 
     dump('✅ After processing queue');
 
@@ -112,6 +136,6 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
     $logs = LogiAuditLog::all();
     dump('✅ All log records in PostgreSQL (logiaudit_logs table):', $logs);
 
-    expect($logs)->toHaveCount(4);
-    expect($failedJobs)->toHaveCount(1);
+    expect($logs)->toHaveCount(5);
+    expect($failedJobs)->toHaveCount(2);
 });

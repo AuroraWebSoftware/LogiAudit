@@ -1,8 +1,8 @@
 <?php
 
-namespace AuroraWebSoftware\LogiAudit\Logging;
+namespace AuroraWebSoftware\LogiAudit\Tests\Logging;
 
-use AuroraWebSoftware\LogiAudit\Jobs\StoreLogJob;
+use AuroraWebSoftware\LogiAudit\Tests\Jobs\StoreLogJob;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Monolog\LogRecord;
@@ -37,7 +37,6 @@ class LogiAuditHandler
                 if (isset($context['context']) && is_array($context['context'])) {
                     $context = $context['context'];
                 }
-
                 if (empty($context)) {
                     $context = null;
                 }

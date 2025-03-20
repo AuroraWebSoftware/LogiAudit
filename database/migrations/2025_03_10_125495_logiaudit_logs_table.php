@@ -18,9 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('model_id')->nullable();
             $table->string('model_type')->nullable();
             $table->string('trace_id')->nullable();
-            $table->json('context')->nullable();
+            $table->jsonb('context')->nullable();
             $table->string('ip_address')->nullable();
             $table->boolean('deletable')->default(true);
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }

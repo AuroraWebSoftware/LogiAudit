@@ -3,6 +3,7 @@
 namespace AuroraWebSoftware\LogiAudit\Jobs;
 
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditLog;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,7 +20,14 @@ class PruneLogJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $deletedCount = LogiAuditLog::where('deletable', true)->delete();
+        $now = Carbon::now();
+
+        $deletedCount = LogiAuditLog::query()
+            ->where('deletable', true)
+            ->whereNotNull('deleted_at')
+            ->where('deleted_at', '<=', $now)
+            ->delete();
+
 
         Log::info("PruneLogJob executed. Deleted {$deletedCount} log records.");
     }
