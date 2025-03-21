@@ -41,8 +41,7 @@
             "AuroraWebSoftware\\LogiAudit\\Database\\Factories\\": "database/factories/"
         },
         "files": [
-            "src/Helpers/helpers.php",
-            "tests/Helpers/helpers.php"
+            "src/Helpers/helpers.php"
         ]
     },
     "autoload-dev": {
