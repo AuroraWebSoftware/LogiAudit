@@ -1,24 +1,26 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "aurorawebsoftware/logiaudit",
+    "description": "Laravel log and audit package",
     "keywords": [
-        ":vendor_name",
+        "AuroraWebSoftware",
         "laravel",
-        ":package_slug"
+        "logiaudit",
+        "log",
+        "audit"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/AuroraWebSoftware/LogiAudit",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Aurora Web Software Team",
+            "email": "websoftwareteam@aurorabilisim.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.3",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^10.0||^11.0||^12.0"
+        "illuminate/contracts": "^11.0||^12.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -35,13 +37,17 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
-        }
+            "AuroraWebSoftware\\LogiAudit\\": "src/",
+            "AuroraWebSoftware\\LogiAudit\\Database\\Factories\\": "database/factories/"
+        },
+        "files": [
+            "src/Helpers/helpers.php",
+            "tests/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "AuroraWebSoftware\\LogiAudit\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +69,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "AuroraWebSoftware\\LogiAudit\\LogiAuditServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LogiAudit": "AuroraWebSoftware\\LogiAudit\\Facades\\LogiAudit"
             }
         }
     },

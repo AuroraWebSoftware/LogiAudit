@@ -1,93 +1,121 @@
-# :package_description
+# LogiAudit
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+LogiAudit is a Laravel package designed for structured logging with support for job-based log storage, pruning, and customizable log levels.
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+## Features
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- **Queue-Based Logging**: Logs are stored asynchronously using Laravel jobs.
+- **Contextual Logging**: Supports logging with model associations, trace IDs, and additional metadata.
+- **Automatic Pruning**: Logs marked as deletable can be automatically removed.
+- **Monolog Integration**: Works seamlessly with Laravel's logging system.
+- **IP Tracking**: Logs IP addresses for traceability.
+- **Configurable Cleanup**: Define log retention periods.
 
 ## Installation
 
-You can install the package via composer:
+You can install the package via Composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require aurorawebsoftware/logiaudit
 ```
 
-You can publish and run the migrations with:
+### Running Migrations
+
+After installation, run the migration command to create the necessary database table:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
 php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
 ```
 
 ## Usage
 
+### Logging Events
+
+You can log messages using the provided `addLog` helper function:
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+addLog('info', 'User logged in', [
+    'model_id' => $user->id,
+    'model_type' => get_class($user),
+    'trace_id' => Str::uuid(),
+    'context' => ['role' => 'admin'],
+    'ip_address' => request()->ip(),
+    'deletable' => true,
+    'delete_after_days' => 30,
+]);
 ```
 
-## Testing
+#### `addLog` Helper Function Details
+
+The `addLog` function allows for flexible logging with optional parameters:
+
+- **`level` (string, required)**: Log level (e.g., `info`, `error`, `warning`).
+- **`message` (string, required)**: The log message.
+- **`options` (array, optional)**: Additional context for the log entry.
+    - `model_id` (int, nullable): The ID of the related model (if applicable).
+    - `model_type` (string, nullable): The model's class name.
+    - `trace_id` (string, nullable): A unique identifier for tracing logs across multiple services.
+    - `context` (array, nullable): Any extra contextual data.
+    - `ip_address` (string, nullable): The IP address of the request.
+    - `deletable` (bool, default: `true`): Determines if the log can be pruned.
+    - `delete_after_days` (int, nullable): Number of days before the log should be automatically deleted (if `deletable` is `true`).
+
+### Using LogiAudit with Laravel's Logging System
+
+You can also log messages using Laravel's built-in logging channels:
+
+```php
+use Illuminate\Support\Facades\Log;
+
+Log::channel('logiaudit')->info('Custom log message', [
+    'model_id' => 1,
+    'model_type' => 'User',
+    'trace_id' => Str::uuid(),
+    'context' => ['key' => 'value'],
+    'ip_address' => request()->ip(),
+]);
+```
+
+To configure Laravel to use this handler, update `config/logging.php`:
+
+```php
+'channels' => [
+    'logiaudit' => [
+        'driver' => 'custom',
+        'via' => AuroraWebSoftware\LogiAudit\Logging\LogiAuditHandler::class,
+    ],
+],
+```
+
+## Running the Log Queue Worker
+
+Since logs are queued using `onQueue('logiaudit')`, you need to run a dedicated queue worker:
 
 ```bash
-composer test
+php artisan queue:work --queue=logiaudit
 ```
 
-## Changelog
+To run the queue worker in the background and ensure it stays active, consider using `supervisor` or `systemd`.
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+## Running the Log Pruning Command
 
-## Contributing
+To remove logs marked as `deletable`, run the following command:
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+```bash
+php artisan logs:prune
+```
 
-## Security Vulnerabilities
+Alternatively, you can schedule this command in your `app/Console/Kernel.php`:
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+```php
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('logs:prune')->daily();
+}
+```
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The LogiAudit package is open-sourced software licensed under the MIT License.
+
+

@@ -1,10 +1,10 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace AuroraWebSoftware\LogiAudit\Tests;
 
+use AuroraWebSoftware\LogiAudit\LogiAuditServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,25 +13,32 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'AuroraWebSoftware\\LogiAudit\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            LogiAuditServiceProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        config()->set('database.default', 'pgsql');
 
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        // for GitHub tests wirh mysql
+        // config()->set('database.default', 'mysql');
+
+        // for local tests with sqlite
+        // config()->set('database.default', 'testing');
+
+        // for local tests with mysql
+        // config()->set('database.default', 'mysql');
+
+        // $migration = include __DIR__.'/../database/migrations/create_flexyfield_table.php';
+        // $migration->up();
+
     }
 }
