@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'AuroraWebSoftware\\LogiAudit\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn(string $modelName) => 'AuroraWebSoftware\\LogiAudit\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
     }
 
@@ -26,6 +26,12 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
+
+        config()->set('database.default', env('DB_CONNECTION', 'mysql'));
+
+        if (env('DB_CONNECTION') === 'mysql') {
+            config()->set('database.connections.mysql.options', []);
+        }
 
         // for GitHub tests wirh mysql
         // config()->set('database.default', 'mysql');
