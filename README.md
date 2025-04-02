@@ -1,6 +1,7 @@
 # LogiAudit
 
-LogiAudit is a Laravel package designed for structured logging with support for job-based log storage, pruning, and customizable log levels.
+LogiAudit is a Laravel package designed for structured logging with support for job-based log storage, pruning, and
+customizable log levels.
 
 ## Features
 
@@ -27,7 +28,7 @@ After installation, run the migration command to create the necessary database t
 php artisan migrate
 ```
 
-## Usage
+# Log Usage
 
 ### Logging Events
 
@@ -58,7 +59,8 @@ The `addLog` function allows for flexible logging with optional parameters:
     - `context` (array, nullable): Any extra contextual data.
     - `ip_address` (string, nullable): The IP address of the request.
     - `deletable` (bool, default: `true`): Determines if the log can be pruned.
-    - `delete_after_days` (int, nullable): Number of days before the log should be automatically deleted (if `deletable` is `true`).
+    - `delete_after_days` (int, nullable): Number of days before the log should be automatically deleted (if `deletable`
+      is `true`).
 
 ### Using LogiAudit with Laravel's Logging System
 
@@ -87,16 +89,6 @@ To configure Laravel to use this handler, update `config/logging.php`:
 ],
 ```
 
-## Running the Log Queue Worker
-
-Since logs are queued using `onQueue('logiaudit')`, you need to run a dedicated queue worker:
-
-```bash
-php artisan queue:work --queue=logiaudit
-```
-
-To run the queue worker in the background and ensure it stays active, consider using `supervisor` or `systemd`.
-
 ## Running the Log Pruning Command
 
 To remove logs marked as `deletable`, run the following command:
@@ -113,6 +105,58 @@ protected function schedule(Schedule $schedule)
     $schedule->command('logs:prune')->daily();
 }
 ```
+
+# History Usage
+
+History Log is simple to use. When you call **HistoryableTrait** into your model classes whose history you want to
+monitor, History Log will start to keep history for your model.
+
+```php
+use HistoryableTrait;
+```
+
+If you want to exclude some columns from this, add this variable to your model class globally and write the column names
+as an array.
+
+```php
+protected $excludedColumns = ['deleted_at', 'id'];
+```
+
+If you don't want to keep history in some model events, add the following variable. Currently, this version only keeps
+the history of create, update and delete events.
+
+```php
+protected $excludedEvents = ['delete', 'create'];
+```
+
+| Id | action  | table  | model            | model_id | column                                     | old_value                                                  | new_value                                                   | user_id | ip_address |
+|----|---------|--------|------------------|----------|--------------------------------------------|------------------------------------------------------------|-------------------------------------------------------------|---------|------------|
+| 1  | created | orders | App\Models\Order | 5        | [["order_code"],["price"],["total_price"]] | [{"order_code":"ABC"},{"price":"20"},{"total_price":"20"}] | [{"order_code":"ABCD"},{"price":"30"},{"total_price":"60"}] | 2       | 177.77.0.1 |
+
+## Running the History Pruning Command
+
+To delete old history records based on their `created_at` timestamp, you can run the following Artisan command:
+
+```bash
+php artisan history:prune {days}
+```
+
+Replace {days} with the number of days you want to retain.
+For example, to delete all history records older than 30 days:
+
+```bash
+php artisan history:prune 30
+```
+
+# Running the Queue Worker
+
+Since logs and history are queued using `onQueue('logiaudit')`, you need to run a dedicated queue worker:
+
+```bash
+php artisan queue:work --queue=logiaudit
+```
+
+To run the queue worker in the background and ensure it stays active, consider using `supervisor` or `systemd`.
 
 ## License
 

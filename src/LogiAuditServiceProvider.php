@@ -2,6 +2,7 @@
 
 namespace AuroraWebSoftware\LogiAudit;
 
+use AuroraWebSoftware\LogiAudit\Commands\PruneHistoryCommand;
 use AuroraWebSoftware\LogiAudit\Commands\PruneLogsCommand;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
@@ -22,6 +23,7 @@ class LogiAuditServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PruneLogsCommand::class,
+                PruneHistoryCommand::class,
             ]);
         }
     }
