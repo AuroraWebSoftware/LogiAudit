@@ -26,7 +26,6 @@ class PruneHistoryJob implements ShouldQueue
     {
         $cutoff = Carbon::now()->subDays($this->days);
 
-
         $deletedCount = LogiAuditHistory::where('created_at', '<=', $cutoff)->delete();
 
         Log::info("PruneHistoryJob executed. Deleted {$deletedCount} history records older than {$this->days} days.");
