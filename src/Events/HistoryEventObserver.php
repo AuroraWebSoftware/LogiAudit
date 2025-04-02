@@ -26,6 +26,7 @@ class HistoryEventObserver
         return true;
     }
 
+
     /**
      * @return bool
      */
