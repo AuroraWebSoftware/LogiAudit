@@ -68,5 +68,5 @@ jobs:
       - name: List Installed Dependencies
         run: composer show -D
 
-      - name: Execute tests
-        run: vendor/bin/pest --ci
+      - name: Execute tests (MySQL)
+        run: vendor/bin/pest --ci -c phpunit.mysql.xml
