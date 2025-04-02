@@ -27,11 +27,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
 
-        config()->set('database.default', env('DB_CONNECTION', 'mysql'));
-
-        if (env('DB_CONNECTION') === 'mysql') {
-            config()->set('database.connections.mysql.options', []);
-        }
+        config()->set('database.default', env('DB_CONNECTION', 'pgsql'));
 
         // for GitHub tests wirh mysql
         // config()->set('database.default', 'mysql');

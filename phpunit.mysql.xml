@@ -36,6 +36,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="database"/>
         <env name="DB_DRIVER" value="mysql"/>
+        <env name="DB_OPTIONS" value="[]"/>
     </php>
 
     <source>
