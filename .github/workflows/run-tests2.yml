@@ -92,8 +92,5 @@ jobs:
             sleep 2
           done
 
-      - name: Run Migrations
-        run: php artisan migrate --force
-
       - name: Execute tests (MySQL)
         run: vendor/bin/pest --ci -c phpunit.mysql.xml
