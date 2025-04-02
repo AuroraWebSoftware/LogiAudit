@@ -22,7 +22,6 @@ class PruneLogJob implements ShouldQueue
     {
         $now = Carbon::now();
 
-
         $deletedCount = LogiAuditLog::query()
             ->where('deletable', true)
             ->whereNotNull('deleted_at')
