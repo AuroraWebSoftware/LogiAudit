@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\Schema;
 beforeEach(function () {
     config(['queue.default' => 'database']);
     Artisan::call('migrate:refresh');
-    dump('✅ Database migrations completed in PostgreSQL...');
-    dump('✅ Queue Driver: '.config('queue.default'));
+    dump('✅ Database migrations completed ...');
+    dump('✅ Queue Driver: ' . config('queue.default'));
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.pgsql'));
+    $this->db->addConnection(config('database.connections.' . config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
-    if (! Schema::hasTable('jobs')) {
+    if (!Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL...");
     }
-    if (! Schema::hasTable('failed_jobs')) {
+    if (!Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL...");
@@ -30,7 +30,7 @@ beforeEach(function () {
 });
 
 it('processes StoreLogJob, checks failed jobs, and prunes logs correctly', function () {
-    dump('✅ Queue Driver: '.config('queue.default'));
+    dump('✅ Queue Driver: ' . config('queue.default'));
 
     addLogT('error', 'Real queue test message', [
         'model_id' => 123,

@@ -13,11 +13,11 @@ beforeEach(function () {
 
     Artisan::call('migrate:refresh');
 
-    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Database migrations completed in ...');
     dump('✅ Queue Driver:', config('queue.default'));
 
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.pgsql'));
+    $this->db->addConnection(config('database.connections.' . config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
