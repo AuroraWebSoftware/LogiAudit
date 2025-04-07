@@ -16,7 +16,7 @@ beforeEach(function () {
     dump('✅ Queue Driver: '.config('queue.default'));
 
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.pgsql'));
+    $this->db->addConnection(config('database.connections.'.config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 

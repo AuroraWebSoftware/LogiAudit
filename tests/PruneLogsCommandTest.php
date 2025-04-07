@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Schema;
 beforeEach(function () {
     config(['queue.default' => 'database']);
     Artisan::call('migrate:refresh');
-    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Database migrations completed ...');
     dump('✅ Queue Driver: '.config('queue.default'));
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.pgsql'));
+    $this->db->addConnection(config('database.connections.'.config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
     if (! Schema::hasTable('jobs')) {
