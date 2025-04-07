@@ -2,6 +2,14 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## 11.0.0 - 2025-04-07
+
+### What's Changed
+
+* Audit by @MFarukDemirkoparan in https://github.com/AuroraWebSoftware/LogiAudit/pull/5
+
+**Full Changelog**: https://github.com/AuroraWebSoftware/LogiAudit/compare/1.0.3...11.0.0
+
 ## 1.0.3 - 2025-03-21
 
 ### What's Changed
