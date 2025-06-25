@@ -112,7 +112,7 @@ History Log is simple to use. When you call **HistoryableTrait** into your model
 monitor, History Log will start to keep history for your model.
 
 ```php
-use HistoryableTrait;
+use LogiAuditTrait;
 ```
 
 If you want to exclude some columns from this, add this variable to your model class globally and write the column names
