@@ -2,6 +2,19 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## 11.0.1 - 2025-06-26
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.3.0 to 2.4.0 by @dependabot in https://github.com/AuroraWebSoftware/LogiAudit/pull/6
+* Helper fix by @MFarukDemirkoparan in https://github.com/AuroraWebSoftware/LogiAudit/pull/8
+
+### New Contributors
+
+* @dependabot made their first contribution in https://github.com/AuroraWebSoftware/LogiAudit/pull/6
+
+**Full Changelog**: https://github.com/AuroraWebSoftware/LogiAudit/compare/11.0.0...11.0.1
+
 ## 11.0.0 - 2025-04-07
 
 ### What's Changed
