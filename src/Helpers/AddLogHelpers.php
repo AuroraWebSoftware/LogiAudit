@@ -8,10 +8,20 @@ if (! function_exists('addLog')) {
         $modelId = $options['model_id'] ?? null;
         $modelType = $options['model_type'] ?? null;
         $traceId = $options['trace_id'] ?? null;
-        $context = $options['context'] ?? null;
         $ipAddress = $options['ip_address'] ?? null;
         $deletable = $options['deletable'] ?? true;
         $deleteAfterDays = $options['delete_after_days'] ?? null;
+
+        unset(
+            $options['model_id'],
+            $options['model_type'],
+            $options['trace_id'],
+            $options['ip_address'],
+            $options['deletable'],
+            $options['delete_after_days']
+        );
+
+        $context = $options ?? null;
 
         StoreLogJob::dispatch(
             $level,
