@@ -2,6 +2,15 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## 11.0.2 - 2025-07-21
+
+### What's Changed
+
+* Queue and prune development by @MFarukDemirkoparan in https://github.com/AuroraWebSoftware/LogiAudit/pull/9
+* Bump stefanzweifel/git-auto-commit-action from 5 to 6 by @dependabot[bot] in https://github.com/AuroraWebSoftware/LogiAudit/pull/7
+
+**Full Changelog**: https://github.com/AuroraWebSoftware/LogiAudit/compare/11.0.1...11.0.2
+
 ## 11.0.1 - 2025-06-26
 
 ### What's Changed
