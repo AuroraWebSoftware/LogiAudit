@@ -52,7 +52,7 @@ class StoreHistoryJob implements ShouldQueue
         $this->userId = $userId;
         $this->ipAddress = $ipAddress;
 
-        $this->onQueue('logiaudit');
+        $this->onQueue(config('logiaudit.history_queue_name'));
     }
 
     public function handle(): void

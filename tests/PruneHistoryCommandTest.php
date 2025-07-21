@@ -1,13 +1,11 @@
 <?php
 
-use AuroraWebSoftware\LogiAudit\Jobs\PruneHistoryJob;
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditHistory;
 use AuroraWebSoftware\LogiAudit\Tests\Models\TestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -39,7 +37,7 @@ beforeEach(function () {
     dump('✅ Environment ready.');
 });
 
-it('dispatches and processes PruneHistoryJob and deletes old history records', function () {
+it('deletes old history records via history:prune command', function () {
     $recent = TestModel::create(['name' => 'Recent']);
     $recent->update(['status' => 'updated']);
     $recent->delete();
@@ -56,7 +54,6 @@ it('dispatches and processes PruneHistoryJob and deletes old history records', f
     ]);
 
     $oldHistoryIds = LogiAuditHistory::where('model_id', $oldId)->pluck('id');
-
     DB::table('logiaudit_history')
         ->whereIn('id', $oldHistoryIds)
         ->update([
@@ -67,12 +64,7 @@ it('dispatches and processes PruneHistoryJob and deletes old history records', f
     $before = LogiAuditHistory::count();
     dump("📊 Before prune: $before records");
 
-    Queue::fake();
     Artisan::call('history:prune', ['days' => 10]);
-    expect(Artisan::output())->toContain('PruneHistoryJob dispatched');
-    Queue::assertPushed(PruneHistoryJob::class);
-
-    (new PruneHistoryJob(10))->handle();
 
     $after = LogiAuditHistory::count();
     dump("📉 After prune: $after records");

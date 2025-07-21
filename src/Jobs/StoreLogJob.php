@@ -56,7 +56,7 @@ class StoreLogJob implements ShouldQueue
         $this->deletable = $deletable;
         $this->deleteAfterDays = $deleteAfterDays;
 
-        $this->onQueue('logiaudit');
+        $this->onQueue(config('logiaudit.log_queue_name'));
     }
 
     /**

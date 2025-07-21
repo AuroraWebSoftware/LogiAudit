@@ -31,7 +31,12 @@ class LogiAuditServiceProvider extends ServiceProvider
     /**
      * Register any package services.
      */
-    public function register() {}
+    public function register()
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/logiaudit.php', 'logiaudit'
+        );
+    }
 
     public function configurePackage(Package $package): void
     {

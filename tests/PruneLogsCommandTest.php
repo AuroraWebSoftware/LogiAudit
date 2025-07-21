@@ -1,11 +1,9 @@
 <?php
 
-use AuroraWebSoftware\LogiAudit\Jobs\PruneLogJob;
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditLog;
 use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -108,22 +106,17 @@ it('processes StoreLogJob, checks failed jobs, and prunes logs correctly', funct
     dump('✅ All log records before pruning:', $logs);
     expect($logs)->toHaveCount(6);
 
-    Queue::fake();
+    $beforeCount = DB::table('logiaudit_logs')->count();
+
+    // silme işlemi (komut ile)
     Artisan::call('logs:prune');
-    expect(Artisan::output())->toContain('PruneLogJob dispatched successfully.');
-    Queue::assertPushed(PruneLogJob::class);
 
-    $initialCount = DB::table('logiaudit_logs')->count();
-    dump("🔍 Initial log count: $initialCount");
+    // prune sonrası log sayısı
+    $afterCount = DB::table('logiaudit_logs')->count();
 
-    (new PruneLogJob)->handle();
+    $deletedNow = $beforeCount - $afterCount;
+    dump("🗑 Number of logs deleted after first prune: $deletedNow");
 
-    $remainingCount = DB::table('logiaudit_logs')->count();
-    dump("🔍 Remaining log count after prune: $remainingCount");
-
-    $deletedCount = $initialCount - $remainingCount;
-    dump("❌ Deleted logs count: $deletedCount");
-
-    expect($remainingCount)->toBe(3)
+    expect($afterCount)->toBe(3)
         ->and(DB::table('logiaudit_logs')->where('deleted_at', '>', Carbon::now())->where('deletable', true)->exists())->toBeTrue();
 });
