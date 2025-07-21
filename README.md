@@ -148,15 +148,45 @@ For example, to delete all history records older than 30 days:
 php artisan history:prune 30
 ```
 
-# Running the Queue Worker
+# Customizing Queue Names
 
-Since logs and history are queued using `onQueue('logiaudit')`, you need to run a dedicated queue worker:
+By default, log and history jobs are queued using the `logiaudit` queue.
 
-```bash
-php artisan queue:work --queue=logiaudit
+You can customize the queue names by editing your config or `.env` file:
+
+## Configuration File Setup
+
+```php
+// config/logiaudit.php
+return [
+    'log_queue_name' => env('LOGIAUDIT_LOG_QUEUE_NAME', 'logiaudit'),
+    'history_queue_name' => env('LOGIAUDIT_HISTORY_QUEUE_NAME', 'logiaudit'),
+];
+```
+If there is no config you can publish
+```php
+php artisan vendor:publish --tag=logiaudit-config
 ```
 
-To run the queue worker in the background and ensure it stays active, consider using `supervisor` or `systemd`.
+## Environment File Setup
+
+For example, to change the queue name for logs and history, add the following to your `.env` file:
+
+```env
+LOGIAUDIT_LOG_QUEUE_NAME=my_custom_log_queue
+LOGIAUDIT_HISTORY_QUEUE_NAME=my_custom_history_queue
+```
+
+## Important Note
+
+If you change the queue names, make sure to run dedicated workers for the new queue names:
+
+```bash
+php artisan queue:work --queue=my_custom_log_queue
+php artisan queue:work --queue=my_custom_history_queue
+```
+
+You can keep the workers running in the background using **supervisor** or **systemd**.
 
 ## License
 

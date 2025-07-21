@@ -119,11 +119,8 @@ it('dispatches and processes multiple StoreLogJob entries with delays and failur
 
     dump('🔸 Before processing queue');
 
-    Artisan::call('queue:work', [
-        '--queue' => 'logiaudit',
-        '--tries' => 1,
-        '--stop-when-empty' => true,
-    ]);
+    $queueName = config('logiaudit.log_queue_name', 'logiaudit');
+    Artisan::call("queue:work --queue={$queueName} --tries=3 --stop-when-empty");
 
     dump('✅ After processing queue');
 

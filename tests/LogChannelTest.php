@@ -8,25 +8,34 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
+
     config(['queue.default' => 'database']);
 
-    Artisan::call('migrate:refresh');
-
-    dump('✅ Database migrations completed in PostgreSQL...');
-    dump('✅ Queue Driver: '.config('queue.default'));
-
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.'.config('database.default')));
+    $this->db->addConnection(config('database.connections.' . config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
-    if (! Schema::hasTable('jobs')) {
+    Artisan::call('migrate:refresh');
+    if (Schema::hasTable('jobs')) {
+        DB::table('jobs')->truncate();
+    }
+    if (Schema::hasTable('failed_jobs')) {
+        DB::table('failed_jobs')->truncate();
+    }
+    if (Schema::hasTable('logiaudit_logs')) {
+        DB::table('logiaudit_logs')->truncate();
+    }
+    dump('✅ Database migrations completed in PostgreSQL...');
+    dump('✅ Queue Driver: ' . config('queue.default'));
+
+    if (!Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL...");
     }
 
-    if (! Schema::hasTable('failed_jobs')) {
+    if (!Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL...");
@@ -82,7 +91,8 @@ it('logs multiple messages, queues them, processes jobs, and verifies results', 
     dump('🔍 Queued Jobs in database:', json_encode($queuedJobs, JSON_PRETTY_PRINT));
     expect($queuedJobs)->toHaveCount(4);
 
-    Artisan::call('queue:work --queue=logiaudit --tries=3 --stop-when-empty');
+    $queueName = config('logiaudit.log_queue_name', 'logiaudit');
+    Artisan::call("queue:work --queue={$queueName} --tries=3 --stop-when-empty");
 
     $remainingJobs = DB::table('jobs')->get();
     dump('🔍 Remaining Jobs in Queue (After Processing):', json_encode($remainingJobs, JSON_PRETTY_PRINT));

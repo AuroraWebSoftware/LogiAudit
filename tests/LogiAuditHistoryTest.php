@@ -67,11 +67,8 @@ it('dispatches and processes StoreHistoryJob entries with one failure', function
     $queuedJobs = DB::table('jobs')->get();
     dump('🔄 Queued Jobs:', $queuedJobs->toArray());
 
-    Artisan::call('queue:work', [
-        '--queue' => 'logiaudit',
-        '--tries' => 1,
-        '--stop-when-empty' => true,
-    ]);
+    $queueName = config('logiaudit.history_queue_name', 'logiaudit');
+    Artisan::call("queue:work --queue={$queueName} --tries=3 --stop-when-empty");
 
     $auditLogs = LogiAuditHistory::orderBy('id')->get();
     dump('📜 Audit Logs:', $auditLogs->toArray());

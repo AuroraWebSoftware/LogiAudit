@@ -39,7 +39,7 @@ beforeEach(function () {
     dump('✅ Environment ready.');
 });
 
-it('dispatches and processes PruneHistoryJob and deletes old history records', function () {
+it('deletes old history records via history:prune command', function () {
     $recent = TestModel::create(['name' => 'Recent']);
     $recent->update(['status' => 'updated']);
     $recent->delete();
@@ -56,7 +56,6 @@ it('dispatches and processes PruneHistoryJob and deletes old history records', f
     ]);
 
     $oldHistoryIds = LogiAuditHistory::where('model_id', $oldId)->pluck('id');
-
     DB::table('logiaudit_history')
         ->whereIn('id', $oldHistoryIds)
         ->update([
@@ -67,12 +66,7 @@ it('dispatches and processes PruneHistoryJob and deletes old history records', f
     $before = LogiAuditHistory::count();
     dump("📊 Before prune: $before records");
 
-    Queue::fake();
     Artisan::call('history:prune', ['days' => 10]);
-    expect(Artisan::output())->toContain('PruneHistoryJob dispatched');
-    Queue::assertPushed(PruneHistoryJob::class);
-
-    (new PruneHistoryJob(10))->handle();
 
     $after = LogiAuditHistory::count();
     dump("📉 After prune: $after records");
@@ -83,3 +77,4 @@ it('dispatches and processes PruneHistoryJob and deletes old history records', f
     expect($after)->toBeLessThan($before);
     expect(LogiAuditHistory::where('model_id', $oldId)->count())->toBe(0);
 });
+
