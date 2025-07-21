@@ -2,14 +2,15 @@
 
 namespace AuroraWebSoftware\LogiAudit\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class PruneLogsCommand extends Command
 {
     protected $signature = 'logs:prune';
+
     protected $description = 'Delete all logs with deletable=true and deleted_at in the past.';
 
     public function handle()

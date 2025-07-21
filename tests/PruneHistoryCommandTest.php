@@ -1,13 +1,11 @@
 <?php
 
-use AuroraWebSoftware\LogiAudit\Jobs\PruneHistoryJob;
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditHistory;
 use AuroraWebSoftware\LogiAudit\Tests\Models\TestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -77,4 +75,3 @@ it('deletes old history records via history:prune command', function () {
     expect($after)->toBeLessThan($before);
     expect(LogiAuditHistory::where('model_id', $oldId)->count())->toBe(0);
 });
-

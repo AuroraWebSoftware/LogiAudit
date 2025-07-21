@@ -2,14 +2,15 @@
 
 namespace AuroraWebSoftware\LogiAudit\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class PruneHistoryCommand extends Command
 {
     protected $signature = 'history:prune {days=30 : Number of days before which records will be deleted}';
+
     protected $description = 'Delete all history records older than X days (created_at <= X days ago)';
 
     public function handle()
@@ -17,6 +18,7 @@ class PruneHistoryCommand extends Command
         $days = (int) $this->argument('days');
         if ($days <= 0) {
             $this->error('Please provide a positive number of days.');
+
             return self::INVALID;
         }
 

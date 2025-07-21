@@ -1,11 +1,9 @@
 <?php
 
-use AuroraWebSoftware\LogiAudit\Jobs\PruneLogJob;
 use AuroraWebSoftware\LogiAudit\Models\LogiAuditLog;
 use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
@@ -108,13 +106,12 @@ it('processes StoreLogJob, checks failed jobs, and prunes logs correctly', funct
     dump('✅ All log records before pruning:', $logs);
     expect($logs)->toHaveCount(6);
 
-
     $beforeCount = DB::table('logiaudit_logs')->count();
 
-// silme işlemi (komut ile)
+    // silme işlemi (komut ile)
     Artisan::call('logs:prune');
 
-// prune sonrası log sayısı
+    // prune sonrası log sayısı
     $afterCount = DB::table('logiaudit_logs')->count();
 
     $deletedNow = $beforeCount - $afterCount;

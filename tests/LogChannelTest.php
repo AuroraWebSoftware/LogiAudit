@@ -12,7 +12,7 @@ beforeEach(function () {
     config(['queue.default' => 'database']);
 
     $this->db = new DB;
-    $this->db->addConnection(config('database.connections.' . config('database.default')));
+    $this->db->addConnection(config('database.connections.'.config('database.default')));
     $this->db->setAsGlobal();
     $this->db->bootEloquent();
 
@@ -27,15 +27,15 @@ beforeEach(function () {
         DB::table('logiaudit_logs')->truncate();
     }
     dump('✅ Database migrations completed in PostgreSQL...');
-    dump('✅ Queue Driver: ' . config('queue.default'));
+    dump('✅ Queue Driver: '.config('queue.default'));
 
-    if (!Schema::hasTable('jobs')) {
+    if (! Schema::hasTable('jobs')) {
         Artisan::call('queue:table');
         Artisan::call('migrate');
         dump("✅ 'jobs' table created in PostgreSQL...");
     }
 
-    if (!Schema::hasTable('failed_jobs')) {
+    if (! Schema::hasTable('failed_jobs')) {
         Artisan::call('queue:failed-table');
         Artisan::call('migrate');
         dump("✅ 'failed_jobs' table created in PostgreSQL...");

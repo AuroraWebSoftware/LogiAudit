@@ -32,17 +32,16 @@ class StoreHistoryJob implements ShouldQueue
     public ?string $ipAddress;
 
     public function __construct(
-        string  $action,
-        string  $table,
-        string  $model,
-        int     $modelId,
-        ?array  $columns = null,
-        ?array  $oldValues = null,
-        ?array  $newValues = null,
-        ?int    $userId = null,
+        string $action,
+        string $table,
+        string $model,
+        int $modelId,
+        ?array $columns = null,
+        ?array $oldValues = null,
+        ?array $newValues = null,
+        ?int $userId = null,
         ?string $ipAddress = null,
-    )
-    {
+    ) {
         $this->action = $action;
         $this->table = $table;
         $this->model = $model;
@@ -67,9 +66,9 @@ class StoreHistoryJob implements ShouldQueue
             'table' => $this->table,
             'model' => $this->model,
             'model_id' => $this->modelId,
-            'column' => !empty($this->columns) ? $this->columns : null,
-            'old_value' => !empty($this->oldValues) ? $this->oldValues : null,
-            'new_value' => !empty($this->newValues) ? $this->newValues : null,
+            'column' => ! empty($this->columns) ? $this->columns : null,
+            'old_value' => ! empty($this->oldValues) ? $this->oldValues : null,
+            'new_value' => ! empty($this->newValues) ? $this->newValues : null,
             'user_id' => $this->userId,
             'ip_address' => $this->ipAddress,
         ]);
